@@ -1,11 +1,15 @@
 use strict;
 use warnings;
 package Cache::Meh;
-$Cache::Meh::VERSION = '0.01';
+{
+  $Cache::Meh::VERSION = '0.02';
+}
+
 use Carp qw(confess);
 use Storable qw(nstore retrieve);
 use File::Spec::Functions qw(tmpdir catfile);
 use File::Temp qw(tempfile);
+use File::Copy qw(move);
 
 # ABSTRACT: A cache of indifferent quality
 
@@ -96,11 +100,11 @@ sub _load {
     return {};
 }
 
-# This method stores the new cache file into a temporary file, then renames the tempfile
-# to the cache state file name, which should help protect against new file write failures,
-# leaving at least *some* state that will persist. I guess you could call this "atomic"
-# but there are still a ton of race conditions in the IO layer which could bite you in the
-# rear-end.
+# This method stores the new cache file into a temporary file, then renames the
+# tempfile to the cache state file name, which should help protect against
+# new file write failures, leaving at least *some* state that will persist. I
+# guess you could call this "atomic" but there are still a ton of race
+# conditions in the IO layer which could bite you in the rear-end.
 
 sub _store {
     my $self = shift;
@@ -111,7 +115,8 @@ sub _store {
         confess "Couldn't store cache in $filename: $!\n";
 
     my $fname = catfile(tmpdir(), $self->filename());
-    rename $filename, $fname or confess "Couldn't rename $filename to $fname: $!\n";
+    move($filename, $fname) or 
+        confess "Couldn't rename $filename to $fname: $!\n";
 
     return 1;
 }
@@ -157,15 +162,13 @@ __END__
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 Cache::Meh - A cache of indifferent quality
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -204,8 +207,10 @@ available.  These are arguably bad design decisions which may encourage you
 to seek your caching pleasure elsewhere. On the other hand, pull requests
 are welcome. 
 
-Since this module is intended to be run under Perl 5.8 (but perferably much
-much more recent Perls) it sadly eschews fancy object systems like Moo.
+Since this module is intended to be run under Perl 5.8 (but preferably much
+much more recent Perls) it sadly eschews fancy object systems like Moo. It
+doesn't require any dependencies beyond core modules.  I maybe would have
+called it Cache::Tiny, but then people might use it.
 
 Besides, this is a cache of indifferent quality. You probably ought to be
 using something awesome like L<CHI> or L<Cache::Cache> or L<Cache>.
