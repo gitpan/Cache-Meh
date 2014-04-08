@@ -4,7 +4,7 @@
       "Mark Allen <mrallen1@yahoo.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300039, CPAN::Meta::Converter version 2.132661",
+   "generated_by" : "Dist::Zilla version 5.015, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -51,6 +51,6 @@
          "web" : "https://github.com/mrallen1/Cache-Meh"
       }
    },
-   "version" : "0.02"
+   "version" : "0.03"
 }
 

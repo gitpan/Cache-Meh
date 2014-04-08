@@ -2,7 +2,7 @@ NAME
     Cache::Meh - A cache of indifferent quality
 
 VERSION
-    version 0.02
+    version 0.03
 
 SYNOPSIS
         use 5.008;

@@ -1,10 +1,7 @@
 use strict;
 use warnings;
 package Cache::Meh;
-{
-  $Cache::Meh::VERSION = '0.02';
-}
-
+$Cache::Meh::VERSION = '0.03';
 use Carp qw(confess);
 use Storable qw(nstore retrieve);
 use File::Spec::Functions qw(tmpdir catfile);
@@ -114,6 +111,11 @@ sub _store {
     nstore($self->{'~~~~cache'}, $filename) or 
         confess "Couldn't store cache in $filename: $!\n";
 
+    # Unix doesn't care if the filehandle is still open, but Windows
+    # will not allow a move unless there are no open handles to the
+    # tempfile.
+    close $fh or confess "Couldn't close filehandle for $filename: $!\n";
+
     my $fname = catfile(tmpdir(), $self->filename());
     move($filename, $fname) or 
         confess "Couldn't rename $filename to $fname: $!\n";
@@ -162,13 +164,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Cache::Meh - A cache of indifferent quality
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
